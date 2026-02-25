@@ -4,17 +4,21 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import eslintPluginPrettier from 'eslint-plugin-prettier/recommended'
 import globals from 'globals'
+import { defineConfig } from 'eslint/config'
 
-export default tseslint.config(
-  { ignores: ['dist'] },
+const TS_FILES = ['**/*.{ts,tsx}']
+
+export default defineConfig(
+  { ignores: ['dist', 'eslint.config.ts'] },
+  js.configs.recommended,
+  ...tseslint.configs.recommendedTypeChecked.map((c) => ({
+    ...c,
+    files: TS_FILES,
+  })),
+  { ...reactHooks.configs.flat['recommended-latest'], files: TS_FILES },
+  { ...eslintPluginPrettier, files: TS_FILES },
   {
-    extends: [
-      js.configs.recommended,
-      ...tseslint.configs.recommendedTypeChecked,
-      reactHooks.configs.flat['recommended-latest'],
-      eslintPluginPrettier,
-    ],
-    files: ['**/*.{ts,tsx}'],
+    files: TS_FILES,
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
@@ -32,5 +36,5 @@ export default tseslint.config(
         { allowConstantExport: true },
       ],
     },
-  }
+  },
 )
